@@ -1,7 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"os"
+	"os/signal"
+
+	"alter-barman/internal/bot"
+)
 
 func main() {
-	fmt.Println("init")
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go bot.Start(ctx)
+
+	<-c
+	cancel()
 }
